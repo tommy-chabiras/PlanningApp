@@ -1,44 +1,49 @@
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.Extensions.FileProviders;
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+	ContentRootPath = Directory.GetCurrentDirectory(),
+	WebRootPath = ""
+});
 
 builder.Services.AddEndpointsApiExplorer();
-
+builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Optional: Enable Swagger in development
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+	app.MapOpenApi();  // For NSwag or use app.UseSwagger(); with Swashbuckle
 }
 
-app.UseHttpsRedirection();
+app.UseRouting();
 
-var summaries = new[]
+// Serve static frontend (e.g., Svelte) files
+app.UseStaticFiles(new StaticFileOptions
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+	FileProvider = new PhysicalFileProvider(
+		Path.Combine(Directory.GetCurrentDirectory(), "..", "frontend", "public")),
+	RequestPath = ""  // Serve at root
+});
 
-app.MapGet("/weatherforecast", () =>
+app.MapWhen(context => context.Request.Path == "/", builder =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    builder.Run(async context =>
+    {
+        var file = Path.Combine(Directory.GetCurrentDirectory(), "..", "frontend", "public", "index.html");
+        context.Response.ContentType = "text/html";
+        await context.Response.SendFileAsync(file);
+    });
+});
+
+// Redirect to '/' for any non-matching routes
+app.MapFallback(async context =>
+{
+    context.Response.Redirect("/", permanent: false);  // Redirect to "/"
+    await Task.CompletedTask;
+});
+
+
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

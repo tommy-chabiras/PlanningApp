@@ -1,6 +1,7 @@
-bin/
+# Ignore ASP.NET Core build output
 obj/
-
+bin/
+wwwroot/
 
 *.user
 *.suo
@@ -19,22 +20,14 @@ node_modules/
 .netlify
 .wrangler
 .svelte-kit
-/build
-/dist
-
-# OS
-.DS_Store
-Thumbs.db
+build/
+dist/
 
 # Env
 .env
 .env.*
 !.env.example
 !.env.test
-
-# Vite
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
 
 
 # macOS
@@ -46,3 +39,10 @@ ehthumbs.db
 Desktop.ini
 
 
+# Ignore npm debug log
+npm-debug.log*
+
+# Ignore ASP.NET Core appsettings and secrets (if any)
+appsettings.Development.json
+appsettings.Production.json
+appsettings.json
