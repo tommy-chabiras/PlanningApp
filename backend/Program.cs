@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using backend.Data;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
@@ -10,6 +12,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+builder.Services.AddDbContext<AppDbContext>(options => 
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
+
 
 // Optional: Enable Swagger in development
 if (app.Environment.IsDevelopment())
