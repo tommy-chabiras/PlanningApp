@@ -1,4 +1,3 @@
-/// <reference types="svelte" />
 declare module "*.svelte" {
-	export { SvelteComponentDev as default } from "svelte/internal";
+	export { SvelteComponentTyped as default } from "svelte";
 }

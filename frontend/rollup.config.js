@@ -1,11 +1,11 @@
 import svelte from "rollup-plugin-svelte";
+import resolve from "@rollup/plugin-node-resolve";
 import { sveltePreprocess } from "svelte-preprocess";
 import postcss from "rollup-plugin-postcss";
-import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "@rollup/plugin-typescript";
 import livereload from "rollup-plugin-livereload";
-import { terser } from "rollup-plugin-terser";
+import terser from "@rollup/plugin-terser";
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -23,20 +23,24 @@ export default {
 	},
 	plugins: [
 		svelte({
+			include: 'src/**/*.svelte',
 			compilerOptions: {
 				dev: !production,
 			},
 			emitCss: true,
-			preprocess: sveltePreprocess({ postcss: true }),
+			preprocess: sveltePreprocess({
+				typescript: true,
+				postcss: true,
+			}),
+		}),
+		resolve({
+			browser: true,
+			dedupe: ["svelte"],
 		}),
 		postcss({
 			extract: true,
 			minimize: production,
 			sourceMap: !production,
-		}),
-		resolve({
-			browser: true,
-			dedupe: ["svelte"],
 		}),
 		commonjs(),
 		typescript({
