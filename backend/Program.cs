@@ -8,20 +8,23 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 	WebRootPath = ""
 });
 
+builder.Services.AddSignalR();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
-var app = builder.Build();
 
+// connect to db
 builder.Services.AddDbContext<AppDbContext>(options => 
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
 
+var app = builder.Build();
+
 // Optional: Enable Swagger in development
 if (app.Environment.IsDevelopment())
 {
-	app.MapOpenApi();  // For NSwag or use app.UseSwagger(); with Swashbuckle
+	app.MapOpenApi(); 
 }
 
 app.UseRouting();
@@ -44,9 +47,21 @@ app.MapWhen(context => context.Request.Path == "/", builder =>
     });
 });
 
+app.MapGet("/{username}", async (string username, AppDbContext db) => 
+{
+	Console.WriteLine($"Requested username: {username}");
+	var user = await db.Users.Where(u => u.Name == username ).FirstOrDefaultAsync();
+	return Results.Ok(new { Message = $"Hello, {username}!" });
+});
+
+// app.MapGet("/api/user")
+
+// app.MapPost("create-user", async (st))
+
 // Redirect to '/' for any non-matching routes
 app.MapFallback(async context =>
 {
+	
     context.Response.Redirect("/", permanent: false);  // Redirect to "/"
     await Task.CompletedTask;
 });
