@@ -1,6 +1,31 @@
 <script lang="ts">
-	let name: string = "TypeScript World";
+	import Router from 'svelte-spa-router'
+	
+	import Home from "./routes/Home.svelte";
+	import Profile from "./routes/Profile.svelte";
+	import NavPartial from "./components/Nav.svelte";
+	let name: string = "Tommy";
+
+
+	// fetch name from backend
+	// name = fetch("get")
+
+	const routes = {
+		"/": Home,
+		"/:username": Profile,
+	}; 
+
+
+
+
 </script>
-  
-<h1>Hello {name}!</h1>
-<input bind:value={name} />
+
+<NavPartial />
+
+<Router {routes} />
+
+<style>
+	:global(body) {
+		height: 100vh;
+	}
+</style>

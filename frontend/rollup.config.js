@@ -23,7 +23,7 @@ export default {
 	},
 	plugins: [
 		svelte({
-			include: 'src/**/*.svelte',
+			include: ['src/**/*.svelte', 'node_modules/**/*.svelte'],
 			compilerOptions: {
 				dev: !production,
 			},

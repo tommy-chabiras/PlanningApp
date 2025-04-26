@@ -28,6 +28,7 @@
 		"typescript": "^5.8.3"
 	},
 	"dependencies": {
+		"svelte-spa-router": "^4.0.1",
 		"tslib": "^2.8.1"
 	}
 }
