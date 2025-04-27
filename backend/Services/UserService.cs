@@ -6,7 +6,7 @@ namespace backend.Services
 {
 	class UserService(AppDbContext _db, PasswordService _passwordService)
 	{
-		public async Task<bool> CheckUsernameASync(string username)
+		public async Task<bool> CheckUsernameAsync(string username)
 		{
 			return await _db.Users.AnyAsync(u => u.Name == username);
 		}
@@ -20,18 +20,29 @@ namespace backend.Services
 							.FirstOrDefaultAsync();
 		}
 
-		public async Task<bool> LoginAsync(string username, string password)
+		public async Task<User> LoginAsync(User user)
 		{
-			var user = await GetUserAsync(username) ??
+			var userT = await GetUserAsync(user.Name) ??
 				throw new ArgumentException("User doesn't exist");
 
-			if (user.PasswordHash is null
-				|| !_passwordService.VerifyPassword(password, user.PasswordHash))
+			if (userT.PasswordHash is null
+				|| !_passwordService.VerifyPassword(user.PasswordHash!, userT.PasswordHash))
 			{
 				throw new UnauthorizedAccessException("Password is Incorrect.");
 			}
 
-			return true;
+			return userT;
+		}
+
+		public async Task AddUserAsync(User user)
+		{
+			if (await CheckUsernameAsync(user.Name))
+			{
+				throw new ArgumentException("Username taken.");
+			}
+
+			await _db.Users.AddAsync(user);
+			await _db.SaveChangesAsync();
 		}
 	}
 }
