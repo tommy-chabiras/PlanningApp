@@ -34,6 +34,19 @@ namespace backend.Services
 			return userT;
 		}
 
+		public async Task<User> EditUserAsync(User user)
+		{
+			_db.Users.Update(user);
+			await _db.SaveChangesAsync();
+			return user;
+		}
+
+		public async Task DeleteUserAsync(User user)
+		{
+			_db.Users.Remove(user);
+			await _db.SaveChangesAsync();
+		}
+
 		public async Task AddUserAsync(User user)
 		{
 			if (await CheckUsernameAsync(user.Name))

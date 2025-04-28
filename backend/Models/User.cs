@@ -1,6 +1,5 @@
 namespace backend.Models
 {
-
 	public class User
 	{
 		public required int Id { get; set; }
