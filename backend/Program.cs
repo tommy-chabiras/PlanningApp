@@ -22,6 +22,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<PasswordService>();
+builder.Services.AddScoped<PlanService>();
 
 var app = builder.Build();
 
@@ -77,14 +78,13 @@ app.MapGet("/api/user/{username}", async (string username, AppDbContext db) =>
 	return Results.Ok(user);
 });
 
-app.MapPost("/api/user/login", async (User user, UserService userService, PasswordService passwordService) => {
-	User? userT = null;
-
+app.MapPost("/api/user/login", async (User user, UserService userService, PasswordService passwordService) =>
+{
 	user.PasswordHash = passwordService.HashPassword(user.PasswordHash!);
 
 	try
 	{
-        userT = await userService.LoginAsync(user);
+		await userService.LoginAsync(user);
 	}
 	catch (ArgumentException e)
 	{
@@ -95,7 +95,7 @@ app.MapPost("/api/user/login", async (User user, UserService userService, Passwo
 		return Results.Unauthorized();
 	}
 
-    return Results.Ok(userT);
+	return Results.Ok(user);
 });
 
 app.MapPost("/api/user/signup", async (User user, UserService userService) =>
@@ -112,10 +112,67 @@ app.MapPost("/api/user/signup", async (User user, UserService userService) =>
 	return Results.Ok(user);
 });
 
+app.MapPost("/api/user/edit", async (User user, UserService userService) =>
+{
+	try
+	{
+		await userService.EditUserAsync(user);
+	}
+	catch (Exception e)
+	{
+		return Results.Conflict(e.Message);
+	}
+
+	return Results.Ok(user);
+});
+
+app.MapPost("/api/user/delete", async (User user, UserService userService) =>
+{
+	try
+	{
+		await userService.DeleteUserAsync(user);
+	}
+	catch (Exception e)
+	{
+		return Results.Conflict(e.Message);
+	}
+
+	return Results.Ok(user);
+});
+
+app.MapPost("/api/user/get-plans", async (User user, UserService userService) =>
+{
+	var plans = await userService.GetUserPlansAsync(user);
+	return Results.Ok(plans);
+});
+
+app.MapPost("/api/plan/get-users", async (Plan plan, PlanService planService) =>
+{
+	var users = await planService.GetPlanUsersAsync(plan);
+	return Results.Ok(users);
+});
+
+app.MapPost("/api/plan/create", async (Plan plan, PlanService planService) =>
+{
+	await planService.CreatePlanAsync(plan);
+	return Results.Ok(plan);
+});
+
+app.MapPost("/api/plan/edit", async (Plan plan, PlanService planService) =>
+{
+	await planService.EditPlanAsync(plan);
+	return Results.Ok(plan);
+});
+
+app.MapPost("/api/plan/delete", async (Plan plan, PlanService planService) =>
+{
+	await planService.DeletePlanAsync(plan);
+	return Results.Ok();
+});
+
 // Redirect to '/' for any non-matching routes
 app.MapFallback(async context =>
 {
-
 	context.Response.Redirect("/", permanent: false);  // Redirect to "/"
 	await Task.CompletedTask;
 });
