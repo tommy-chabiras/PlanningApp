@@ -36,9 +36,11 @@ namespace backend.Services
 
 		public async Task<User> EditUserAsync(User user)
 		{
+			var userT = await GetUserAsync(user.Name) ??
+				throw new ArgumentException("User doesn't exist");
 			_db.Users.Update(user);
 			await _db.SaveChangesAsync();
-			return user;
+			return userT;
 		}
 
 		public async Task DeleteUserAsync(User user)
@@ -56,6 +58,14 @@ namespace backend.Services
 
 			await _db.Users.AddAsync(user);
 			await _db.SaveChangesAsync();
+		}
+
+		public async Task<ICollection<Plan>> GetUserPlansAsync(User user)
+		{
+			return await _db.PlanUsers
+				.Where(pu => pu.User == user)
+				.Select(pu => pu.Plan)
+				.ToListAsync();
 		}
 	}
 }

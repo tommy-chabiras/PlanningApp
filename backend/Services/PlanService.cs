@@ -6,14 +6,6 @@ namespace backend.Services
 {
 	class PlanService(AppDbContext _db)
 	{
-		public async Task<ICollection<Plan>> GetUserPlansAsync(User user)
-		{
-			return await _db.PlanUsers
-				.Where(pu => pu.User == user)
-				.Select(pu => pu.Plan)
-				.ToListAsync();
-		}
-
 		public async Task<ICollection<User>> GetPlanUsersAsync(Plan plan)
 		{
 			return await _db.PlanUsers
