@@ -3,6 +3,12 @@ using Microsoft.Extensions.FileProviders;
 using backend.Data;
 using backend.Models;
 using backend.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
+
+
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
@@ -10,10 +16,28 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 	WebRootPath = ""
 });
 
+
+
 builder.Services.AddSignalR();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => 
+{
+	var jwtSettings = builder.Configuration.GetSection("Jwt");
+	options.TokenValidationParameters = new TokenValidationParameters
+	{
+		ValidateIssuer = true,
+		ValidateAudience = true,
+		ValidateLifetime = true,
+		ValidateIssuerSigningKey = true,
+		ValidIssuer = jwtSettings["Issuer"],
+		ValidAudience = jwtSettings["Audience"],
+		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]!))
+	};
+});
+
+builder.Services.AddAuthorization();
 
 // connect to db
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -23,8 +47,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<PasswordService>();
 builder.Services.AddScoped<PlanService>();
+builder.Services.AddScoped<JwtService>();
 
 var app = builder.Build();
+
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 
 // Optional: Enable Swagger in development
 if (app.Environment.IsDevelopment())
@@ -65,6 +95,9 @@ app.MapWhen(context => context.Request.Path == "/", builder =>
 // 	return Results.Ok(user);
 // });
 
+
+
+
 app.MapGet("/api/user/{username}", async (string username, AppDbContext db) =>
 {
 	Console.WriteLine($"Requested username: {username}");
@@ -78,7 +111,7 @@ app.MapGet("/api/user/{username}", async (string username, AppDbContext db) =>
 	return Results.Ok(user);
 });
 
-app.MapPost("/api/user/login", async (User user, UserService userService, PasswordService passwordService) =>
+app.MapPost("/api/user/login", async (User user, UserService userService, PasswordService passwordService, JwtService jwtService) =>
 {
 	user.PasswordHash = passwordService.HashPassword(user.PasswordHash!);
 
@@ -95,7 +128,9 @@ app.MapPost("/api/user/login", async (User user, UserService userService, Passwo
 		return Results.Unauthorized();
 	}
 
-	return Results.Ok(user);
+    var token = jwtService.GenerateToken(user);
+
+    return Results.Ok(new { token });
 });
 
 app.MapPost("/api/user/signup", async (User user, UserService userService) =>
@@ -111,6 +146,7 @@ app.MapPost("/api/user/signup", async (User user, UserService userService) =>
 
 	return Results.Ok(user);
 });
+
 
 app.MapPost("/api/user/edit", async (User user, UserService userService) =>
 {
@@ -171,7 +207,7 @@ app.MapPost("/api/plan/delete", async (Plan plan, PlanService planService) =>
 });
 
 // Redirect to '/' for any non-matching routes
-app.MapFallback(async context =>
+app.MapFallback(async (context) =>
 {
 	context.Response.Redirect("/", permanent: false);  // Redirect to "/"
 	await Task.CompletedTask;
