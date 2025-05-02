@@ -160,7 +160,7 @@ app.MapPost("/api/user/edit", async (User user, UserService userService) =>
 	}
 
 	return Results.Ok(user);
-});
+}).RequireAuthorization();
 
 app.MapPost("/api/user/delete", async (User user, UserService userService) =>
 {
@@ -174,7 +174,7 @@ app.MapPost("/api/user/delete", async (User user, UserService userService) =>
 	}
 
 	return Results.Ok(user);
-});
+}).RequireAuthorization();
 
 app.MapPost("/api/user/get-plans", async (User user, UserService userService) =>
 {
