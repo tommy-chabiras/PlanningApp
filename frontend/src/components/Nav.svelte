@@ -1,14 +1,12 @@
 <script lang="ts">
-	import Signup from "./Signup.svelte";
-	import Login from "./Login.svelte";
+	export let displayModal: (type: string) => void;
 
 	let user: string = "";
-	let modal: boolean = false;
-	let modalType: string;
+	// let modal: boolean = false;
+	// let modalType: string;
 
-	function displayModal(type: string) {
-		modal = true;
-		modalType = type;
+	function handleClick(type: string) {
+		displayModal(type);
 	}
 </script>
 
@@ -26,23 +24,15 @@
 		</div>
 	{:else}
 		<div class="desktop-menu">
-			<button onclick={() => displayModal("signup")}>Sign Up</button>
-			<button onclick={() => displayModal("login")}>Log In</button>
+			<button on:click={() => handleClick("signup")}>Sign Up</button>
+			<button on:click={() => handleClick("login")}>Log In</button>
 		</div>
 		<div class="mobile-menu">
-			<button onclick={() => displayModal("signup")}>Sign Up</button>
-			<button onclick={() => displayModal("login")}>Log In</button>
+			<button on:click={() => handleClick("signup")}>Sign Up</button>
+			<button on:click={() => handleClick("login")}>Log In</button>
 		</div>
 	{/if}
 </nav>
-
-{#if modal}
-	{#if modalType === "signup"}
-		<Signup />
-	{:else if modalType === "login"}
-		<Login />
-	{/if}
-{/if}
 
 <style>
 	:root {
@@ -77,10 +67,10 @@
 
 	.desktop-menu button {
 		padding: 10px 25px;
-		background-color: rgb(200, 200, 236);
+		background-color: rgba(200, 200, 236, 0.5);
 		border-radius: 10px;
 	}
-	
+
 	.desktop-menu {
 		display: block;
 	}
