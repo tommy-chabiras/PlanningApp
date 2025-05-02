@@ -1,4 +1,5 @@
 using backend.Data;
+using backend.Dtos;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,19 +16,17 @@ namespace backend.Services
 		{
 			return await _db.Users
 							.OfType<RegisteredUser>()
-							.Where(u => u.Name.Equals(
-								username, StringComparison.OrdinalIgnoreCase
-							))
+							.Where(u => u.Name == username)
 							.FirstOrDefaultAsync();
 		}
 
-		public async Task<RegisteredUser> LoginAsync(RegisteredUser user)
+		public async Task<RegisteredUser> LoginAsync(LoginRequest user)
 		{
-			var userT = await GetUserAsync(user.Name) as RegisteredUser ??
+			var userT = await GetUserAsync(user.Username) as RegisteredUser ??
 				throw new ArgumentException("User doesn't exist");
 
 			if (userT.PasswordHash is null
-				|| !_passwordService.VerifyPassword(user.PasswordHash!, userT.PasswordHash))
+				|| !_passwordService.VerifyPassword(userT.PasswordHash, user.Password))
 			{
 				throw new UnauthorizedAccessException("Password is Incorrect.");
 			}

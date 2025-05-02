@@ -3,10 +3,10 @@ using Microsoft.Extensions.FileProviders;
 using backend.Data;
 using backend.Models;
 using backend.Services;
+using backend.Dtos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.AspNetCore.Authorization;
 
 
 
@@ -22,7 +22,7 @@ builder.Services.AddSignalR();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
 	var jwtSettings = builder.Configuration.GetSection("Jwt");
 	options.TokenValidationParameters = new TokenValidationParameters
@@ -111,26 +111,26 @@ app.MapGet("/api/user/{username}", async (string username, AppDbContext db) =>
 	return Results.Ok(user);
 });
 
-app.MapPost("/api/user/login", async (RegisteredUser user, UserService userService, PasswordService passwordService, JwtService jwtService) =>
+app.MapPost("/api/user/login", async (LoginRequest loginR, UserService userService, PasswordService passwordService, JwtService jwtService) =>
 {
-	user.PasswordHash = passwordService.HashPassword(user.PasswordHash!);
+	RegisteredUser user;
 
 	try
 	{
-		await userService.LoginAsync(user);
+		user = await userService.LoginAsync(loginR);
 	}
 	catch (ArgumentException e)
 	{
-		Results.NotFound(e.Message);
+		return Results.Json(new { error = e.Message }, statusCode: 400);
 	}
-	catch (UnauthorizedAccessException)
+	catch (UnauthorizedAccessException e)
 	{
-		return Results.Unauthorized();
+		return Results.Json(new { error = e.Message }, statusCode: 401);
 	}
 
-    var token = jwtService.GenerateToken(user);
+	var token = jwtService.GenerateToken(user);
 
-    return Results.Ok(new { token });
+	return Results.Ok(new { token });
 });
 
 app.MapPost("/api/user/signup", async (RegisteredUser user, UserService userService) =>
