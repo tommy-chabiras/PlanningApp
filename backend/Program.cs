@@ -111,7 +111,7 @@ app.MapGet("/api/user/{username}", async (string username, AppDbContext db) =>
 	return Results.Ok(user);
 });
 
-app.MapPost("/api/user/login", async (User user, UserService userService, PasswordService passwordService, JwtService jwtService) =>
+app.MapPost("/api/user/login", async (RegisteredUser user, UserService userService, PasswordService passwordService, JwtService jwtService) =>
 {
 	user.PasswordHash = passwordService.HashPassword(user.PasswordHash!);
 

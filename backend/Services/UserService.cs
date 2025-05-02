@@ -14,15 +14,16 @@ namespace backend.Services
 		public async Task<User?> GetUserAsync(string username)
 		{
 			return await _db.Users
+							.OfType<RegisteredUser>()
 							.Where(u => u.Name.Equals(
 								username, StringComparison.OrdinalIgnoreCase
 							))
 							.FirstOrDefaultAsync();
 		}
 
-		public async Task<User> LoginAsync(User user)
+		public async Task<RegisteredUser> LoginAsync(RegisteredUser user)
 		{
-			var userT = await GetUserAsync(user.Name) ??
+			var userT = await GetUserAsync(user.Name) as RegisteredUser ??
 				throw new ArgumentException("User doesn't exist");
 
 			if (userT.PasswordHash is null

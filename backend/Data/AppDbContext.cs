@@ -14,6 +14,11 @@ namespace backend.Data
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
+			modelBuilder.Entity<User>()
+				.HasDiscriminator<string>("UserType")
+				.HasValue<RegisteredUser>("RegisteredUser")
+				.HasValue<GuestUser>("GuestUser");
+
 			modelBuilder.Entity<PlanUser>()
 				.Property(p => p.Role)
 				.HasConversion<string>();
