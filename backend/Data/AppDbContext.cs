@@ -22,6 +22,11 @@ namespace backend.Data
 			modelBuilder.Entity<PlanUser>()
 				.Property(p => p.Role)
 				.HasConversion<string>();
+
+
+			modelBuilder.Entity<RegisteredUser>()
+				.Property(u => u.IsVerified)
+				.HasDefaultValue(false);
 		}
 	}
 }
