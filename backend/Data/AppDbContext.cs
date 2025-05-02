@@ -19,6 +19,11 @@ namespace backend.Data
 				.HasValue<RegisteredUser>("RegisteredUser")
 				.HasValue<GuestUser>("GuestUser");
 
+
+			modelBuilder.Entity<User>()
+				.Property(u => u.Name)
+				.UseCollation("SQL_Latin1_General_CP1_CI_AS");
+
 			modelBuilder.Entity<PlanUser>()
 				.Property(p => p.Role)
 				.HasConversion<string>();
