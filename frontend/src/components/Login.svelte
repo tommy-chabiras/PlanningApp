@@ -1,13 +1,49 @@
+<script lang="ts">
+	let username = "";
+	let password = "";
+	let error = false;
+	let errorStream: {error?: String};
+
+	async function login(e: Event) {
+		e.preventDefault();
+		const response = await fetch("/api/user/login", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ username, password }),
+		});
+		
+		if (!response.ok) {
+			errorStream = JSON.parse(await response.text());
+			error = true;
+		}
+		else {
+			const data = await response.json();
+			localStorage.setItem("token", data.token);
+			window.location.href = "/";
+		}
+	}
+</script>
+
 <div>
 	<h2>Login</h2>
-	<form action="/api/user/login" method="post">
-		<input type="text" name="username" placeholder="Username" id="username" />
-		<input type="text" name="password" placeholder="Password" id="password" />
+	{#if error}
+		<p>{errorStream.error}</p>
+	{/if}
+	<form on:submit={login} method="post">
+		<input type="text" bind:value={username} placeholder="Username" />
+		<input type="password" bind:value={password} placeholder="Password" />
 		<button>Log In</button>
 	</form>
 </div>
 
 <style>
+	p {
+		color: red;
+		text-align: center;
+	}
+	
 	h2 {
 		font-size: 2rem;
 		font-weight: 700;
@@ -20,12 +56,12 @@
 		gap: 10px;
 		align-items: center;
 	}
-	
+
 	div {
 		min-width: max-content;
 		padding: 50px;
 		border-radius: 25px;
-		box-shadow: 0 0 10px 1px rgba(0,0,0);
+		box-shadow: 0 0 10px 1px rgba(0, 0, 0);
 	}
 
 	input {
@@ -36,7 +72,8 @@
 	input::placeholder {
 		color: #000000;
 	}
-	button, input {
+	button,
+	input {
 		border-radius: 50px;
 	}
 
