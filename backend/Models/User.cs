@@ -10,6 +10,7 @@ namespace backend.Models
 
 	public class RegisteredUser : User
 	{
+		public required string Username { get; set; }
 		public required string PasswordHash { get; set; }
 		public required string Email { get; set; }
 		public required bool IsVerified { get; set; }

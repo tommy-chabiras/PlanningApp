@@ -9,15 +9,25 @@ namespace backend.Services
 	{
 		public async Task<bool> CheckUsernameAsync(string username)
 		{
-			return await _db.Users.AnyAsync(u => u.Name == username);
+			return await _db.Users
+								.OfType<RegisteredUser>()
+								.AnyAsync(u => u.Username == username);
 		}
 
 		public async Task<User?> GetUserAsync(string username)
 		{
 			return await _db.Users
-							.OfType<RegisteredUser>()
-							.Where(u => u.Name == username)
-							.FirstOrDefaultAsync();
+								.OfType<RegisteredUser>()
+								.Where(u => u.Username == username)
+								.FirstOrDefaultAsync();
+		}
+
+		public async Task<User?> GetUserAsync(int id)
+		{
+			return await _db.Users
+								.OfType<User>()
+								.Where(u => u.Id == id)
+								.FirstOrDefaultAsync();
 		}
 
 		public async Task<RegisteredUser> LoginAsync(LoginRequest r)
@@ -36,7 +46,7 @@ namespace backend.Services
 
 		public async Task<User> EditUserAsync(User user)
 		{
-			var userT = await GetUserAsync(user.Name) ??
+			var userT = await GetUserAsync(user.Id) ??
 				throw new ArgumentException("User doesn't exist");
 			_db.Users.Update(user);
 			await _db.SaveChangesAsync();
@@ -49,7 +59,7 @@ namespace backend.Services
 			await _db.SaveChangesAsync();
 		}
 
-		public async Task AddUserAsync(SignupRequest r)
+		public async Task<RegisteredUser> AddUserAsync(SignupRequest r)
 		{
 
 
@@ -61,13 +71,15 @@ namespace backend.Services
 			var user = new RegisteredUser
 			{
 				Name = r.Username,
+				Username = r.Username,
 				PasswordHash = _passwordService.HashPassword(r.Password),
 				Email = r.Email,
-				IsVerified = false // or true if you verify on signup
+				IsVerified = false
 			};
 
 			await _db.Users.AddAsync(user);
 			await _db.SaveChangesAsync();
+			return user;
 		}
 
 		public async Task<ICollection<Plan>> GetUserPlansAsync(User user)
