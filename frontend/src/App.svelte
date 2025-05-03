@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Router from "svelte-spa-router";
-
 	import Home from "./routes/Home.svelte";
 	import Profile from "./routes/Profile.svelte";
 	import NavPartial from "./components/Nav.svelte";
@@ -28,7 +27,7 @@
 
 <NavPartial {displayModal} />
 
-<main>
+<main class="main-con">
 	<Router {routes} />
 	{#if modal}
 		{#if modalType === "signup"}
@@ -51,10 +50,4 @@
 		margin: 0px;
 	}
 
-	main {
-		height: 100%;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
 </style>
