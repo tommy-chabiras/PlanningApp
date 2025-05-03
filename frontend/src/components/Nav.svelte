@@ -1,9 +1,25 @@
 <script lang="ts">
 	export let displayModal: (type: string) => void;
 
-	let user: string = "";
-	// let modal: boolean = false;
-	// let modalType: string;
+	let token: Record<string, any> | null = decodeToken(localStorage.getItem("token"));
+
+	function decodeToken(token: string | null): any {
+		if (token) {
+			const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+			const jsonPayload = decodeURIComponent(
+				atob(base64)
+					.split("")
+					.map(function (c) {
+						return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+					})
+					.join("")
+			);
+
+			return JSON.parse(jsonPayload);
+		} else {
+			return null;
+		}
+	}
 
 	function handleClick(type: string) {
 		displayModal(type);
@@ -14,13 +30,13 @@
 	<div>
 		<a href="/"><h1>Link Up</h1></a>
 	</div>
-	{#if user}
-		<div class="">
-			<a href="/profile">Account</a>
+	{#if token}
+		<div class="desktop-menu">
 			<a href="/create-plan">Create</a>
+			<a href="/{token.name.toLowerCase()}">{token.name}</a>
 		</div>
-		<div>
-			<a href="/profile">Account</a>
+		<div class="mobile-menu">
+			<a href="/{token.name.toLowerCase()}">{token.name}</a>
 		</div>
 	{:else}
 		<div class="desktop-menu">
