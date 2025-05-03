@@ -2,7 +2,7 @@ namespace backend.Models
 {
 	public class User
 	{
-		public required int Id { get; set; }
+		public int Id { get; set; }
 		public required string Name { get; set; }
 
 		public DateTime? LastLogin { get; set; }

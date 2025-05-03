@@ -133,7 +133,7 @@ app.MapPost("/api/user/login", async (LoginRequest loginR, UserService userServi
 	return Results.Ok(new { token });
 });
 
-app.MapPost("/api/user/signup", async (RegisteredUser user, UserService userService) =>
+app.MapPost("/api/user/signup", async (SignupRequest user, UserService userService) =>
 {
 	try
 	{

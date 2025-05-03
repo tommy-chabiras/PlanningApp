@@ -20,13 +20,13 @@ namespace backend.Services
 							.FirstOrDefaultAsync();
 		}
 
-		public async Task<RegisteredUser> LoginAsync(LoginRequest user)
+		public async Task<RegisteredUser> LoginAsync(LoginRequest r)
 		{
-			var userT = await GetUserAsync(user.Username) as RegisteredUser ??
+			var userT = await GetUserAsync(r.Username) as RegisteredUser ??
 				throw new ArgumentException("User doesn't exist");
 
 			if (userT.PasswordHash is null
-				|| !_passwordService.VerifyPassword(userT.PasswordHash, user.Password))
+				|| !_passwordService.VerifyPassword(userT.PasswordHash, r.Password))
 			{
 				throw new UnauthorizedAccessException("Password is Incorrect.");
 			}
@@ -49,12 +49,22 @@ namespace backend.Services
 			await _db.SaveChangesAsync();
 		}
 
-		public async Task AddUserAsync(User user)
+		public async Task AddUserAsync(SignupRequest r)
 		{
-			if (await CheckUsernameAsync(user.Name))
+
+
+			if (await CheckUsernameAsync(r.Username))
 			{
 				throw new ArgumentException("Username taken.");
 			}
+
+			var user = new RegisteredUser
+			{
+				Name = r.Username,
+				PasswordHash = _passwordService.HashPassword(r.Password),
+				Email = r.Email,
+				IsVerified = false // or true if you verify on signup
+			};
 
 			await _db.Users.AddAsync(user);
 			await _db.SaveChangesAsync();
