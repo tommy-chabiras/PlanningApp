@@ -205,18 +205,11 @@ app.MapPost("/api/plan/get-users", async (Plan plan, PlanService planService) =>
 app.MapPost("/api/plan/create", async (HttpRequest request, PlanRequest planR, PlanService planService) =>
 {
 	Plan plan;
-	User user;
-
-	if (request.Headers.Authorization.Count == 0)
-	{
-		user = new GuestUser();
-
-	}
 
 	try
 	{
 		plan = await planService.CreatePlanAsync(planR);
-		plan.
+		
 	}
 	catch (Exception e)
 	{
@@ -224,7 +217,7 @@ app.MapPost("/api/plan/create", async (HttpRequest request, PlanRequest planR, P
 	}
 
 	return Results.Ok(plan);
-});
+}).RequireAuthorization();
 
 app.MapPost("/api/plan/edit", async (Plan plan, PlanService planService) =>
 {
