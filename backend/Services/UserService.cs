@@ -14,6 +14,13 @@ namespace backend.Services
 								.AnyAsync(u => u.Username == username);
 		}
 
+		public async Task<bool> CheckEmailAsync(string email)
+		{
+			return await _db.Users
+								.OfType<RegisteredUser>()
+								.AnyAsync(u => u.Email == email);
+		}
+
 		public async Task<User?> GetUserAsync(string username)
 		{
 			return await _db.Users
@@ -65,9 +72,13 @@ namespace backend.Services
 
 			if (await CheckUsernameAsync(r.Username))
 			{
-				throw new ArgumentException("Username taken.");
+				throw new ArgumentException("The selected username is taken.");
 			}
-
+			else if (await CheckEmailAsync(r.Email))
+			{
+				throw new ArgumentException("An account with this email already exists.");
+			}
+ 
 			var user = new RegisteredUser
 			{
 				Name = r.Username,
