@@ -10,6 +10,8 @@ namespace backend.Services
 	{
 		public string GenerateToken(User user)
 		{
+			bool isGuest = user is GuestUser;
+
 			var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]!);
 			var issuer = _config["Jwt:Issuer"];
 			var audience = _config["Jwt:Audience"];
@@ -17,7 +19,8 @@ namespace backend.Services
 			{
 			new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
 			new Claim(JwtRegisteredClaimNames.Name, user.Name),
-		};
+			new Claim("isGuest", isGuest.ToString()),
+			};
 
 			var token = new JwtSecurityToken(
 					issuer: issuer,
