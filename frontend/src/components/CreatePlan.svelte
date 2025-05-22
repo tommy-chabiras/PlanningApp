@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { token } from "../stores/auth";
-	import { displayModal } from "../stores/modal";
-
+	import { displayModal, completeModal } from "../stores/modal";
 
 	let title: string = "";
 	let description: string = "";
@@ -12,9 +11,11 @@
 
 	async function createPlan(e: Event) {
 		e.preventDefault();
-		if (!token) {
-			displayModal("SignupGuest");
+		if (!$token) {
+			await displayModal("signupGuest");
 		}
+
+
 		const response = await fetch("/api/plan/create", {
 			method: "POST",
 			headers: {
@@ -30,6 +31,7 @@
 			localStorage.setItem("token", data.token);
 			window.location.href = "/";
 		}
+		completeModal();
 	}
 </script>
 

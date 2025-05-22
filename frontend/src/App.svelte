@@ -29,7 +29,7 @@
 			{:else if $modalType === "create"}
 				<CreatePlan />
 			{:else if $modalType === "signupGuest"}
-				<Signup />
+				<SignupGuest />
 			{/if}
 		</div>
 	{/if}

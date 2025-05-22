@@ -1,4 +1,5 @@
 <script lang="ts">
+	import {completeModal} from "../stores/modal"
 	let username = "";
 	let password = "";
 	let error = false;
@@ -23,6 +24,7 @@
 			localStorage.setItem("token", data.token);
 			window.location.href = "/";
 		}
+		completeModal();
 	}
 </script>
 

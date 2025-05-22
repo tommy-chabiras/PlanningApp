@@ -10,12 +10,12 @@
 			plans = await response.json();
 		}
 	});
-	
+
 </script>
 
 <div class="plan-con flex">
 	<button
-		on:click={() => displayModal("create")}
+		on:click={async () => await displayModal("create")}
 		type="button"
 		class="plan-card"
 		aria-label="add plan"
@@ -48,12 +48,4 @@
 		</div>
 	{/each}
 </div>
-<!-- 
-{#if modal}
-	{#if $modalType === "create"}
-		<div class="modal-focus"></div>
-		<div class="modal-con">
 
-		</div>
-	{/if}
-{/if} -->

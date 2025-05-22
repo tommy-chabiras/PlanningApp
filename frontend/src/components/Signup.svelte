@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { completeModal } from "../stores/modal";
+
 	let displayName = "";
 	let username = "";
 	let password = "";
@@ -33,6 +35,7 @@
 				pwError = true;
 			}
 		}
+		completeModal();
 	}
 </script>
 

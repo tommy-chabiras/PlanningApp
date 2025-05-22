@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { completeModal } from "../stores/modal";
+
 	let name = "";
 	let error = false;
 	let errorStream: { error?: String };
@@ -20,6 +22,7 @@
 			const data = await response.json();
 			localStorage.setItem("token", data.token);
 		}
+		completeModal();
 	}
 </script>
 
