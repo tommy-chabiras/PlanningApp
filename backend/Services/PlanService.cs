@@ -49,7 +49,7 @@ namespace backend.Services
 		public async Task<Plan> CreatePlanAsync(PlanRequest planR)
 		{
 			planR.Code = await GeneratePlanCode();
-			var plan = new Plan
+			Plan plan = new()
 			{
 				Title = planR.Title,
 				Code = planR.Code,
