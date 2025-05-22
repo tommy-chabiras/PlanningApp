@@ -7,9 +7,8 @@ namespace backend.Models
 		public required string Title { get; set; }
 		public string? Description { get; set; }
 		public required string Location { get; set; }
-		public DateTime Time { get; set; }
+		public required DateTime Time { get; set; }
 
-		// foreign keys
 		public ICollection<PlanUser> Participants { get; set; } = [];
 	}
 }
