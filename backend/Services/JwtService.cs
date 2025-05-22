@@ -19,7 +19,7 @@ namespace backend.Services
 			{
 			new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
 			new Claim(JwtRegisteredClaimNames.Name, user.Name),
-			new Claim("isGuest", isGuest.ToString()),
+			new Claim("isGuest", isGuest.ToString().ToLower()),
 			};
 
 			var token = new JwtSecurityToken(
