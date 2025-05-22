@@ -4,18 +4,23 @@
 	let token: Record<string, any> | null = decodeToken(localStorage.getItem("token"));
 
 	function decodeToken(token: string | null): any {
-		if (token) {
-			const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
-			const jsonPayload = decodeURIComponent(
-				atob(base64)
+		if (token && token !== "undefined") {
+			try {
+				const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+				const jsonPayload = decodeURIComponent(
+					atob(base64)
 					.split("")
 					.map(function (c) {
 						return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
 					})
 					.join("")
-			);
+				);
+				return JSON.parse(jsonPayload);
+			}
+			catch {
+				console.log("invalid token");
+			}
 
-			return JSON.parse(jsonPayload);
 		} else {
 			return null;
 		}
@@ -24,6 +29,7 @@
 	function handleClick(type: string) {
 		displayModal(type);
 	}
+	
 </script>
 
 <nav>
