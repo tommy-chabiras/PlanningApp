@@ -30,3 +30,9 @@ export function setToken(t: string | null) {
 	token.set(decodeToken(t));
 	if (t) localStorage.setItem("token", t);
 }
+
+export function logout() {
+	localStorage.removeItem("token");
+	token.set(null);
+	window.location.href = "/";
+}

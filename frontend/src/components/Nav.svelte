@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { token } from "../stores/auth";
+	import { token, logout } from "../stores/auth";
 	import { displayModal } from "../stores/modal";
-
 
 	function handleClick(type: string) {
 		displayModal(type);
 	}
-	
+
 </script>
 
 <nav>
@@ -17,9 +16,11 @@
 		<div class="desktop-menu">
 			<a href="/create-plan">Create</a>
 			<a href="/{$token.name.toLowerCase()}">{$token.name}</a>
+			<button on:click={logout}>Log out</button>
 		</div>
 		<div class="mobile-menu">
 			<a href="/{$token.name.toLowerCase()}">{$token.name}</a>
+			<button on:click={logout}>Log out</button>
 		</div>
 	{:else}
 		<div class="desktop-menu">
