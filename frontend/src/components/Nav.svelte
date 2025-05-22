@@ -1,30 +1,7 @@
 <script lang="ts">
-	export let displayModal: (type: string) => void;
+	import { token } from "../stores/auth";
+	import { displayModal } from "../stores/modal";
 
-	let token: Record<string, any> | null = decodeToken(localStorage.getItem("token"));
-
-	function decodeToken(token: string | null): any {
-		if (token && token !== "undefined") {
-			try {
-				const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
-				const jsonPayload = decodeURIComponent(
-					atob(base64)
-					.split("")
-					.map(function (c) {
-						return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-					})
-					.join("")
-				);
-				return JSON.parse(jsonPayload);
-			}
-			catch {
-				console.log("invalid token");
-			}
-
-		} else {
-			return null;
-		}
-	}
 
 	function handleClick(type: string) {
 		displayModal(type);
@@ -36,13 +13,13 @@
 	<div>
 		<a href="/"><h1>Link Up</h1></a>
 	</div>
-	{#if token}
+	{#if $token}
 		<div class="desktop-menu">
 			<a href="/create-plan">Create</a>
-			<a href="/{token.name.toLowerCase()}">{token.name}</a>
+			<a href="/{$token.name.toLowerCase()}">{$token.name}</a>
 		</div>
 		<div class="mobile-menu">
-			<a href="/{token.name.toLowerCase()}">{token.name}</a>
+			<a href="/{$token.name.toLowerCase()}">{$token.name}</a>
 		</div>
 	{:else}
 		<div class="desktop-menu">

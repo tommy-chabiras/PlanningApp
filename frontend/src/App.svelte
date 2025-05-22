@@ -1,40 +1,35 @@
 <script lang="ts">
 	import Router from "svelte-spa-router";
-	import { modalType } from "./stores/modal";
+	import { modal, modalType } from "./stores/modal";
 	import Home from "./routes/Home.svelte";
 	import Profile from "./routes/Profile.svelte";
 	import NavPartial from "./components/Nav.svelte";
 	import Signup from "./components/Signup.svelte";
+	import SignupGuest from "./components/SignupGuest.svelte";
 	import Login from "./components/Login.svelte";
-	let name: string = "Tommy";
-
-	// fetch name from backend
-	// name = fetch("get")
+	import CreatePlan from "./components/CreatePlan.svelte";
 
 	const routes = {
 		"/": Home,
 		"/:username": Profile,
 	};
-
-	let modal = false;
-
-	function displayModal(type: string) {
-		modal = true;
-		modalType.set(type);
-	}
 </script>
 
-<NavPartial {displayModal} />
+<NavPartial />
 
 <main class="main-con">
 	<Router {routes} />
-	{#if modal}
+	{#if $modal}
 		<div class="modal-focus"></div>
 		<div class="modal-con">
 			{#if $modalType === "signup"}
 				<Signup />
 			{:else if $modalType === "login"}
 				<Login />
+			{:else if $modalType === "create"}
+				<CreatePlan />
+			{:else if $modalType === "signupGuest"}
+				<Signup />
 			{/if}
 		</div>
 	{/if}

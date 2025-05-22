@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { modalType } from "../stores/modal";
-	import CreatePlan from "../components/CreatePlan.svelte";
-	// import EditPlan from "../components/EditPlan.svelte";
+	import { displayModal } from "../stores/modal";
+
 
 	let plans: any[];
 	onMount(async () => {
@@ -11,13 +10,7 @@
 			plans = await response.json();
 		}
 	});
-
-	let modal = false;
-
-	function displayModal(type: string) {
-		modal = true;
-		modalType.set(type);
-	}
+	
 </script>
 
 <div class="plan-con flex">
@@ -55,12 +48,12 @@
 		</div>
 	{/each}
 </div>
-
+<!-- 
 {#if modal}
 	{#if $modalType === "create"}
 		<div class="modal-focus"></div>
 		<div class="modal-con">
-			<CreatePlan />
+
 		</div>
 	{/if}
-{/if}
+{/if} -->

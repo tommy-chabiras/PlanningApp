@@ -1,4 +1,5 @@
 <script lang="ts">
+	let displayName = "";
 	let username = "";
 	let password = "";
 	let password2 = "";
@@ -18,7 +19,7 @@
 					headers: {
 						"Content-Type": "application/json",
 					},
-					body: JSON.stringify({ username, email, password }),
+					body: JSON.stringify({name: displayName, username, email, password }),
 				});
 				if (!response.ok) {
 					errorStream = JSON.parse(await response.text());
@@ -41,6 +42,12 @@
 		<p class="error-text">{errorStream}</p>
 	{/if}
 	<form class="login-form" on:submit={signup} method="post">
+		<input
+			class="modal-input"
+			type="text"
+			bind:value={displayName}
+			placeholder="Display Name"
+		/>
 		<input
 			class="modal-input"
 			type="text"

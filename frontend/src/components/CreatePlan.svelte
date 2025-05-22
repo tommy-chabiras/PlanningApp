@@ -1,20 +1,26 @@
 <script lang="ts">
+	import { token } from "../stores/auth";
+	import { displayModal } from "../stores/modal";
 
-	let title:string = "";
-	let description:string = "";
-	let location:string = "";
-	let time:string = "";
-	let errorStream:{error?:string} = {};
+
+	let title: string = "";
+	let description: string = "";
+	let location: string = "";
+	let time: string = "";
+	let errorStream: { error?: string } = {};
 	let error = false;
 
 	async function createPlan(e: Event) {
 		e.preventDefault();
+		if (!token) {
+			displayModal("SignupGuest");
+		}
 		const response = await fetch("/api/plan/create", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ title, description, location, time }),
+			body: JSON.stringify({ title, location, time, description }),
 		});
 		if (!response.ok) {
 			errorStream = JSON.parse(await response.text());
@@ -36,25 +42,31 @@
 		<input
 			class="modal-input"
 			type="text"
+			name="title"
 			bind:value={title}
 			placeholder="Plan title"
 		/>
 		<input
 			class="modal-input"
 			type="text"
+			name="location"
 			bind:value={location}
 			placeholder="Location"
 		/>
 		<input
 			class="modal-input"
 			type="datetime-local"
+			on:click={(e) => e.currentTarget.showPicker()}
+			name="datetime"
 			bind:value={time}
 			placeholder="time"
 		/>
 		<textarea
 			class="modal-input"
+			name="description"
 			bind:value={description}
-			placeholder="Enter plan description here.">
+			placeholder="Enter plan description here."
+		>
 		</textarea>
 		<button class="modal-btn" type="submit">Sign Up</button>
 	</form>
