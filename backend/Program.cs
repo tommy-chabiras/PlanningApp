@@ -7,6 +7,7 @@ using backend.Dtos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Security.Claims;
 
 
 
@@ -64,12 +65,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 
-// Serve static frontend (e.g., Svelte) files
 app.UseStaticFiles(new StaticFileOptions
 {
 	FileProvider = new PhysicalFileProvider(
 		Path.Combine(Directory.GetCurrentDirectory(), "..", "frontend", "public")),
-	RequestPath = ""  // Serve at root
+	RequestPath = ""
 });
 
 app.MapWhen(context => context.Request.Path == "/", builder =>
@@ -178,8 +178,14 @@ app.MapPost("/api/user/delete", async (User user, UserService userService) =>
 	return Results.Ok(user);
 }).RequireAuthorization();
 
-app.MapPost("/api/user/get-plans", async (User user, UserService userService) =>
+app.MapGet("/api/user/get-plans", async (HttpContext http, UserService userService) =>
 {
+	var username = http.User.FindFirst(ClaimTypes.Name)?.Value;
+	if (username is null) return Results.Ok();
+
+	var user = await userService.GetUserAsync(username);
+	if (user is null) return Results.Ok();
+
 	var plans = await userService.GetUserPlansAsync(user);
 	return Results.Ok(plans);
 });
@@ -190,9 +196,27 @@ app.MapPost("/api/plan/get-users", async (Plan plan, PlanService planService) =>
 	return Results.Ok(users);
 });
 
-app.MapPost("/api/plan/create", async (Plan plan, PlanService planService) =>
+app.MapPost("/api/plan/create", async (HttpRequest request, PlanRequest planR, PlanService planService) =>
 {
-	await planService.CreatePlanAsync(plan);
+	Plan plan;
+	User user;
+
+	if (request.Headers.Authorization.Count == 0)
+	{
+		user = new GuestUser();
+
+	} 
+
+	try
+	{
+		plan = await planService.CreatePlanAsync(planR);
+		plan.
+	}
+	catch (Exception e)
+	{
+		return Results.Conflict(e.Message);
+	}
+
 	return Results.Ok(plan);
 });
 
@@ -208,10 +232,10 @@ app.MapPost("/api/plan/delete", async (Plan plan, PlanService planService) =>
 	return Results.Ok();
 });
 
-// Redirect to '/' for any non-matching routes
+
 app.MapFallback(async (context) =>
 {
-	context.Response.Redirect("/", permanent: false);  // Redirect to "/"
+	context.Response.Redirect("/", permanent: false);
 	await Task.CompletedTask;
 });
 
