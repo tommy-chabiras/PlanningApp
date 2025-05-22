@@ -26,7 +26,7 @@
 	}
 </script>
 
-<div class="modal-con">
+<div class="modal">
 	<h2 class="modal-title">Login</h2>
 	{#if error}
 		<p class="error-text">{errorStream.error}</p>

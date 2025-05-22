@@ -8,7 +8,7 @@
 
 	$: pwError = password2 && password !== password2;
 
-	async function login(e: Event) {
+	async function signup(e: Event) {
 		e.preventDefault();
 		if (password.length > 1 && password2.length > 1) {
 			if (password === password2) {
@@ -20,7 +20,6 @@
 					},
 					body: JSON.stringify({ username, email, password }),
 				});
-
 				if (!response.ok) {
 					errorStream = JSON.parse(await response.text());
 					error = true;
@@ -36,12 +35,12 @@
 	}
 </script>
 
-<div class="modal-con">
+<div class="modal">
 	<h2 class="modal-title">Sign up</h2>
 	{#if error}
-		<p class="error-text">{errorStream.error}</p>
+		<p class="error-text">{errorStream}</p>
 	{/if}
-	<form class="login-form" on:submit={login} method="post">
+	<form class="login-form" on:submit={signup} method="post">
 		<input
 			class="modal-input"
 			type="text"

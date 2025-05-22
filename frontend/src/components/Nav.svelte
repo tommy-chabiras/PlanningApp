@@ -63,7 +63,7 @@
 		justify-content: space-between;
 		align-items: center;
 		width: 100%;
-		position: fixed;
+		box-shadow: 0 1px 5px 0px #00000078;
 	}
 
 	h1 {
