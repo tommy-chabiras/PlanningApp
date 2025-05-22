@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { completeModal } from "../stores/modal";
+	import { setToken } from "../stores/auth";
 
 	let displayName = "";
 	let username = "";
@@ -21,14 +22,19 @@
 					headers: {
 						"Content-Type": "application/json",
 					},
-					body: JSON.stringify({name: displayName, username, email, password }),
+					body: JSON.stringify({
+						name: displayName,
+						username,
+						email,
+						password,
+					}),
 				});
 				if (!response.ok) {
 					errorStream = JSON.parse(await response.text());
 					error = true;
 				} else {
 					const data = await response.json();
-					localStorage.setItem("token", data.token);
+					setToken(data.token);
 					window.location.href = "/";
 				}
 			} else {

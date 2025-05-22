@@ -1,5 +1,6 @@
 <script lang="ts">
-	import {completeModal} from "../stores/modal"
+	import {completeModal} from "../stores/modal";
+	import {setToken} from "../stores/auth";
 	let username = "";
 	let password = "";
 	let error = false;
@@ -21,7 +22,7 @@
 		}
 		else {
 			const data = await response.json();
-			localStorage.setItem("token", data.token);
+			setToken(data.token);
 			window.location.href = "/";
 		}
 		completeModal();

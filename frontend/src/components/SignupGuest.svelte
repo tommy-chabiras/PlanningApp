@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { completeModal } from "../stores/modal";
+	import { setToken } from "../stores/auth";
 
 	let name = "";
 	let error = false;
@@ -20,7 +21,7 @@
 			error = true;
 		} else {
 			const data = await response.json();
-			localStorage.setItem("token", data.token);
+			setToken(data.token);
 		}
 		completeModal();
 	}

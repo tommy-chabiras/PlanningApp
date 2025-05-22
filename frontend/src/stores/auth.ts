@@ -1,6 +1,8 @@
 import { writable } from "svelte/store";
 
-export const token = writable<Record<string, any> | null>(decodeToken(localStorage.getItem("token")));
+export let token = writable<Record<string, any> | null>(
+	decodeToken(localStorage.getItem("token"))
+);
 
 function decodeToken(token: string | null): any {
 	if (token && token !== "undefined") {
@@ -22,4 +24,9 @@ function decodeToken(token: string | null): any {
 	} else {
 		return null;
 	}
+}
+
+export function setToken(t: string | null) {
+	token.set(decodeToken(t));
+	if (t) localStorage.setItem("token", t);
 }

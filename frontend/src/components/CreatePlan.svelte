@@ -13,13 +13,16 @@
 		e.preventDefault();
 		if (!$token) {
 			await displayModal("signupGuest");
+			if (!$token) {
+				return;
+			}
 		}
-
 
 		const response = await fetch("/api/plan/create", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
+				Authorization: `Bearer ${localStorage.getItem("token")}`,
 			},
 			body: JSON.stringify({ title, location, time, description }),
 		});
@@ -28,10 +31,12 @@
 			error = true;
 		} else {
 			const data = await response.json();
+			
 			localStorage.setItem("token", data.token);
+
 			window.location.href = "/";
 		}
-		completeModal();
+
 	}
 </script>
 
