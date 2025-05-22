@@ -57,7 +57,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 
-// Optional: Enable Swagger in development
 if (app.Environment.IsDevelopment())
 {
 	app.MapOpenApi();
@@ -133,6 +132,13 @@ app.MapPost("/api/user/login", async (LoginRequest loginR, UserService userServi
 	return Results.Ok(new { token });
 });
 
+app.MapPost("/api/user/guest", async (SignupRequestGuest signupR, UserService userService, JwtService jwtService) =>
+{
+	GuestUser guest = await userService.AddUserAsync(signupR);
+	var token = jwtService.GenerateToken(guest);
+	return Results.Ok(new { token });
+});
+
 app.MapPost("/api/user/signup", async (SignupRequest signupR, UserService userService, JwtService jwtService) =>
 {
 	RegisteredUser user;
@@ -205,7 +211,7 @@ app.MapPost("/api/plan/create", async (HttpRequest request, PlanRequest planR, P
 	{
 		user = new GuestUser();
 
-	} 
+	}
 
 	try
 	{
@@ -224,13 +230,13 @@ app.MapPost("/api/plan/edit", async (Plan plan, PlanService planService) =>
 {
 	await planService.EditPlanAsync(plan);
 	return Results.Ok(plan);
-});
+}).RequireAuthorization();
 
 app.MapPost("/api/plan/delete", async (Plan plan, PlanService planService) =>
 {
 	await planService.DeletePlanAsync(plan);
 	return Results.Ok();
-});
+}).RequireAuthorization();
 
 
 app.MapFallback(async (context) =>
