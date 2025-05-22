@@ -81,7 +81,7 @@ namespace backend.Services
  
 			var user = new RegisteredUser
 			{
-				Name = r.Username,
+				Name = r.Name,
 				Username = r.Username,
 				PasswordHash = _passwordService.HashPassword(r.Password),
 				Email = r.Email,
@@ -92,6 +92,19 @@ namespace backend.Services
 			await _db.SaveChangesAsync();
 			return user;
 		}
+
+		public async Task<GuestUser> AddUserAsync(SignupRequestGuest r)
+		{
+			GuestUser user = new()
+			{
+				Name = r.Name
+			};
+
+			await _db.Users.AddAsync(user);
+			await _db.SaveChangesAsync();
+			return user;
+		}
+
 
 		public async Task<ICollection<Plan>> GetUserPlansAsync(User user)
 		{
