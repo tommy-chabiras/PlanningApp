@@ -52,6 +52,7 @@ builder.Services.AddScoped<JwtService>();
 
 var app = builder.Build();
 
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -62,7 +63,7 @@ if (app.Environment.IsDevelopment())
 	app.MapOpenApi();
 }
 
-app.UseRouting();
+
 
 app.UseStaticFiles(new StaticFileOptions
 {
@@ -209,7 +210,7 @@ app.MapPost("/api/plan/create", async (HttpRequest request, PlanRequest planR, P
 	try
 	{
 		plan = await planService.CreatePlanAsync(planR);
-		
+
 	}
 	catch (Exception e)
 	{
