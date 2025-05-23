@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { token } from "../stores/auth";
+	import { token, setToken } from "../stores/auth";
 	import { displayModal, completeModal } from "../stores/modal";
 
 	let title: string = "";
@@ -31,12 +31,10 @@
 			error = true;
 		} else {
 			const data = await response.json();
-			
-			localStorage.setItem("token", data.token);
-
+			setToken(data.token);
 		}
 		window.location.href = "/";
-
+		completeModal();
 	}
 </script>
 

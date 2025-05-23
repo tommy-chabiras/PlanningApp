@@ -30,7 +30,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 	{
 		ValidateIssuer = true,
 		ValidateAudience = true,
-		ValidateLifetime = true,
+		ValidateLifetime = false,
 		ValidateIssuerSigningKey = true,
 		ValidIssuer = jwtSettings["Issuer"],
 		ValidAudience = jwtSettings["Audience"],
@@ -203,20 +203,24 @@ app.MapPost("/api/plan/get-users", async (Plan plan, PlanService planService) =>
 	return Results.Ok(users);
 });
 
-app.MapPost("/api/plan/create", async (HttpRequest request, PlanRequest planR, PlanService planService) =>
+
+// app. 
+
+app.MapPost("/api/plan/create", async (HttpContext ctx, PlanRequest planR, PlanService planService) =>
 {
 	Plan plan;
 
 	try
 	{
 		plan = await planService.CreatePlanAsync(planR);
-
 	}
 	catch (Exception e)
 	{
 		return Results.Conflict(e.Message);
 	}
+	// ctx.User.FindFirst(ClaimTypes.NameIdentifier);
 
+	// plan.Participants.Add(request.Headers.Authorization.);
 	return Results.Ok(plan);
 }).RequireAuthorization();
 
