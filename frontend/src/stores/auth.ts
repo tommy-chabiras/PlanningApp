@@ -18,7 +18,6 @@ function decodeToken(token: string | null): any {
 			);
 			return JSON.parse(jsonPayload);
 		} catch {
-			console.log("invalid token");
 			return null;
 		}
 	} else {

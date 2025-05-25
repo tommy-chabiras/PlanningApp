@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace backend.Models
 {
 	public class PlanUser
@@ -8,6 +10,7 @@ namespace backend.Models
 
 		public required Role Role { get; set; } = Role.Participant;
 
+		[JsonIgnore]
 		public Plan Plan { get; set; } = default!;
 		public User User { get; set; } = default!;
 	}

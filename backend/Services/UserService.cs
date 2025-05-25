@@ -108,8 +108,9 @@ namespace backend.Services
 
 		public async Task<ICollection<Plan>> GetUserPlansAsync(User user)
 		{
+			Console.WriteLine(user.Id);
 			return await _db.PlanUsers
-				.Where(pu => pu.User == user)
+				.Where(pu => pu.UserId == user.Id)
 				.Select(pu => pu.Plan)
 				.ToListAsync();
 		}

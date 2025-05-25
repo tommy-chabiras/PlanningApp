@@ -5,8 +5,14 @@
 
 	let plans: any[];
 	onMount(async () => {
-		const response = await fetch("/api/user/get-plans", { method: "GET" });
-		if (response.ok && (await response.text())) {
+		const response = await fetch("/api/user/get-plans", { method: "GET",
+			headers: {
+				"Authorization": `Bearer ${localStorage.getItem("token")}`
+			}
+		 });
+		if (response.ok) {
+			console.log("GESGE");
+			console.log(await response.json());
 			plans = await response.json();
 		}
 	});
