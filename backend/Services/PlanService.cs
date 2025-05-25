@@ -54,6 +54,7 @@ namespace backend.Services
 				Title = planR.Title,
 				Code = planR.Code,
 				Location = planR.Location,
+				Description = planR.Description,
 				Time = planR.Time
 			};
 			

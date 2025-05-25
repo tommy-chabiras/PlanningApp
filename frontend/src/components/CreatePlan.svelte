@@ -33,7 +33,7 @@
 			const data = await response.json();
 			setToken(data.token);
 		}
-		window.location.href = "/";
+		// window.location.href = "/";
 		completeModal();
 	}
 </script>

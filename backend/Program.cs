@@ -190,7 +190,7 @@ app.MapGet("/api/user/get-plans/{userId?}", async (int? userId, HttpContext http
 	if (!userId.HasValue)
 	{
 		var userIdStr = http.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-		Console.WriteLine(ClaimTypes.NameIdentifier);
+		
 		if (userIdStr is null) return Results.Ok();
 		userId = int.Parse(userIdStr);
 	}
@@ -199,7 +199,6 @@ app.MapGet("/api/user/get-plans/{userId?}", async (int? userId, HttpContext http
 	if (user is null) return Results.Ok();
 
 	var plans = await userService.GetUserPlansAsync(user);
-	Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(plans));
 	return Results.Ok(plans);
 });
 
@@ -214,8 +213,6 @@ app.MapPost("/api/plan/get-users", async (Plan plan, PlanService planService) =>
 app.MapPost("/api/plan/create", async (HttpContext ctx, PlanRequest planR, PlanService planService, AppDbContext db) =>
 {
 	Plan plan;
-
-
 
 	try
 	{
@@ -236,7 +233,7 @@ app.MapPost("/api/plan/create", async (HttpContext ctx, PlanRequest planR, PlanS
 
 	await db.PlanUsers.AddAsync(planUser);
 	await db.SaveChangesAsync();
-	
+
 	return Results.Ok(plan);
 
 }).RequireAuthorization();
