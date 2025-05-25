@@ -204,11 +204,12 @@ app.MapPost("/api/plan/get-users", async (Plan plan, PlanService planService) =>
 });
 
 
-// app. 
 
-app.MapPost("/api/plan/create", async (HttpContext ctx, PlanRequest planR, PlanService planService) =>
+app.MapPost("/api/plan/create", async (HttpContext ctx, PlanRequest planR, PlanService planService, AppDbContext db) =>
 {
 	Plan plan;
+
+
 
 	try
 	{
@@ -218,10 +219,19 @@ app.MapPost("/api/plan/create", async (HttpContext ctx, PlanRequest planR, PlanS
 	{
 		return Results.Conflict(e.Message);
 	}
-	// ctx.User.FindFirst(ClaimTypes.NameIdentifier);
 
-	// plan.Participants.Add(request.Headers.Authorization.);
+
+	var planUser = new PlanUser
+	{
+		UserId = int.Parse(ctx.User.FindFirst(ClaimTypes.NameIdentifier)!.Value),
+		PlanId = plan.Id,
+		Role = Role.Creator
+	};
+
+	await db.PlanUsers.AddAsync(planUser);
+
 	return Results.Ok(plan);
+	
 }).RequireAuthorization();
 
 app.MapPost("/api/plan/edit", async (Plan plan, PlanService planService) =>
