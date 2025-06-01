@@ -16,20 +16,20 @@
 		<div class="desktop-menu">
 			<a href="/create-plan">Create</a>
 			<a href="/{$token.name.toLowerCase()}">{$token.name}</a>
-			<button on:click={logout}>Log out</button>
+			<button onclick={logout}>Log out</button>
 		</div>
 		<div class="mobile-menu">
 			<a href="/{$token.name.toLowerCase()}">{$token.name}</a>
-			<button on:click={logout}>Log out</button>
+			<button onclick={logout}>Log out</button>
 		</div>
 	{:else}
 		<div class="desktop-menu">
-			<button on:click={() => handleClick("signup")}>Sign Up</button>
-			<button on:click={() => handleClick("login")}>Log In</button>
+			<button onclick={() => handleClick("signup")}>Sign Up</button>
+			<button onclick={() => handleClick("login")}>Log In</button>
 		</div>
 		<div class="mobile-menu">
-			<button on:click={() => handleClick("signup")}>Sign Up</button>
-			<button on:click={() => handleClick("login")}>Log In</button>
+			<button onclick={() => handleClick("signup")}>Sign Up</button>
+			<button onclick={() => handleClick("login")}>Log In</button>
 		</div>
 	{/if}
 </nav>

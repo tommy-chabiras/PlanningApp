@@ -1,18 +1,17 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import { displayModal } from "../stores/modal";
+	
+	let plans: any[] = $state([]);
 
-
-	let plans: any[];
 	onMount(async () => {
-		const response = await fetch("/api/user/get-plans", { method: "GET",
+		const response = await fetch("/api/user/get-plans", {
+			method: "GET",
 			headers: {
-				"Authorization": `Bearer ${localStorage.getItem("token")}`
-			}
-		 });
+				Authorization: `Bearer ${localStorage.getItem("token")}`,
+			},
+		});
 		if (response.ok) {
-			console.log("GESGE");
-			console.log(await response.json());
 			plans = await response.json();
 		}
 	});
@@ -21,7 +20,7 @@
 
 <div class="plan-con flex">
 	<button
-		on:click={async () => await displayModal("create")}
+		onclick={async () => await displayModal("create")}
 		type="button"
 		class="plan-card"
 		aria-label="add plan"
@@ -49,9 +48,13 @@
 		>
 	</button>
 	{#each plans as plan, i}
-		<div class="plan-card">
-			<p>{plan.name}</p>
-		</div>
+		<a href={`/plan/${plan.code}`}>
+			<div class="plan-card">
+				<p>{plan.title}</p>
+				<p>{plan.location}</p>
+				<p>{plan.time}</p>
+				<p>{plan.description}</p>
+			</div>
+		</a>
 	{/each}
 </div>
-

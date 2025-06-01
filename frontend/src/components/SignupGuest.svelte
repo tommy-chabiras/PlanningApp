@@ -2,9 +2,9 @@
 	import { completeModal } from "../stores/modal";
 	import { setToken } from "../stores/auth";
 
-	let name = "";
-	let error = false;
-	let errorStream: { error?: String };
+	let name = $state("");
+	let error = $state(false);
+	let errorStream: { error?: String } = $state({});
 
 	async function registerGuest(e: Event) {
 		e.preventDefault();
@@ -32,7 +32,7 @@
 	{#if error}
 		<p class="error-text">{errorStream.error}</p>
 	{/if}
-	<form class="login-form" on:submit={registerGuest} method="post">
+	<form class="login-form" onsubmit={registerGuest} method="post">
 		<input
 			class="modal-input"
 			type="text"

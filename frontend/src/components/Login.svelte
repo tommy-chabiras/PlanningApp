@@ -1,10 +1,10 @@
 <script lang="ts">
 	import {completeModal} from "../stores/modal";
 	import {setToken} from "../stores/auth";
-	let username = "";
-	let password = "";
-	let error = false;
-	let errorStream: {error?: String};
+	let username = $state("");
+	let password = $state("");
+	let error = $state(false);
+	let errorStream: {error?: String} = $state({});
 
 	async function login(e: Event) {
 		e.preventDefault();
@@ -34,7 +34,7 @@
 	{#if error}
 		<p class="error-text">{errorStream.error}</p>
 	{/if}
-	<form class="login-form" on:submit={login} method="post">
+	<form class="login-form" onsubmit={login} method="post">
 		<input class="modal-input" type="text" bind:value={username} placeholder="Username"/>
 		<input class="modal-input" type="password" bind:value={password} placeholder="Password"/>
 		<button class="modal-btn" type="submit">Log In</button>

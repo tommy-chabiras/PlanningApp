@@ -2,21 +2,20 @@
 	import { completeModal } from "../stores/modal";
 	import { setToken } from "../stores/auth";
 
-	let displayName = "";
-	let username = "";
-	let password = "";
-	let password2 = "";
-	let email = "";
-	let error = false;
-	let errorStream: { error?: String };
+	let displayName = $state("");
+	let username = $state("");
+	let password = $state("");
+	let password2 = $state("");
+	let email = $state("");
+	let error = $state(false);
+	let errorStream: { error?: String } = $state({});
 
-	$: pwError = password2 && password !== password2;
+	let pwError = $derived(password2 && password !== password2);
 
 	async function signup(e: Event) {
 		e.preventDefault();
 		if (password.length > 1 && password2.length > 1) {
-			if (password === password2) {
-				pwError = false;
+			if (!pwError) {
 				const response = await fetch("/api/user/signup", {
 					method: "POST",
 					headers: {
@@ -37,8 +36,6 @@
 					setToken(data.token);
 					window.location.href = "/";
 				}
-			} else {
-				pwError = true;
 			}
 		}
 		completeModal();
@@ -50,7 +47,7 @@
 	{#if error}
 		<p class="error-text">{errorStream}</p>
 	{/if}
-	<form class="login-form" on:submit={signup} method="post">
+	<form class="login-form" onsubmit={signup} method="post">
 		<input
 			class="modal-input"
 			type="text"
