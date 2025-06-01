@@ -1,5 +1,6 @@
 <script lang="ts">
-	import Router from "svelte-spa-router";
+	import { Router } from "svelte-spa-history-router";
+
 	import { modal, modalType } from "./stores/modal";
 	import Home from "./routes/Home.svelte";
 	import Profile from "./routes/Profile.svelte";
@@ -8,11 +9,13 @@
 	import SignupGuest from "./components/SignupGuest.svelte";
 	import Login from "./components/Login.svelte";
 	import CreatePlan from "./components/CreatePlan.svelte";
+	import Plan from "./routes/Plan.svelte";
 
-	const routes = {
-		"/": Home,
-		"/:username": Profile,
-	};
+	const routes = [
+		{ path: "/", component: Home },
+		{ path: "/plan/(?<plancode>.*)", component: Plan },
+		{ path: "/(?<username>.*)", component: Profile },
+	];
 </script>
 
 <NavPartial />
