@@ -37,6 +37,10 @@ namespace backend.Services
 		{
 			return await _db.Plans.Where(p => p.Code == planR.Code).FirstOrDefaultAsync();
 		}
+				public async Task<Plan?> GetPlanAsync(string planCode)
+		{
+			return await _db.Plans.Where(p => p.Code == planCode).FirstOrDefaultAsync();
+		}
 
 		public async Task<ICollection<User>> GetPlanUsersAsync(Plan plan)
 		{
