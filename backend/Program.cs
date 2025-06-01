@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 
 
 
@@ -63,12 +64,12 @@ if (app.Environment.IsDevelopment())
 	app.MapOpenApi();
 }
 
+var frontendPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "frontend", "public");
 
 
 app.UseStaticFiles(new StaticFileOptions
 {
-	FileProvider = new PhysicalFileProvider(
-		Path.Combine(Directory.GetCurrentDirectory(), "..", "frontend", "public")),
+	FileProvider = new PhysicalFileProvider(frontendPath),
 	RequestPath = ""
 });
 
@@ -111,7 +112,7 @@ app.MapGet("/api/user/{username}", async (string username, AppDbContext db) =>
 	return Results.Ok(user);
 });
 
-app.MapPost("/api/user/login", async (LoginRequest loginR, UserService userService, PasswordService passwordService, JwtService jwtService) =>
+app.MapPost("/api/user/login", async ([FromBody] LoginRequest loginR, UserService userService, PasswordService passwordService, JwtService jwtService) =>
 {
 	RegisteredUser user;
 
@@ -133,14 +134,14 @@ app.MapPost("/api/user/login", async (LoginRequest loginR, UserService userServi
 	return Results.Ok(new { token });
 });
 
-app.MapPost("/api/user/guest", async (SignupRequestGuest signupR, UserService userService, JwtService jwtService) =>
+app.MapPost("/api/user/guest", async ([FromBody] SignupRequestGuest signupR, UserService userService, JwtService jwtService) =>
 {
 	GuestUser guest = await userService.AddUserAsync(signupR);
 	var token = jwtService.GenerateToken(guest);
 	return Results.Ok(new { token });
 });
 
-app.MapPost("/api/user/signup", async (SignupRequest signupR, UserService userService, JwtService jwtService) =>
+app.MapPost("/api/user/signup", async ([FromBody] SignupRequest signupR, UserService userService, JwtService jwtService) =>
 {
 	RegisteredUser user;
 	try
@@ -157,7 +158,7 @@ app.MapPost("/api/user/signup", async (SignupRequest signupR, UserService userSe
 });
 
 
-app.MapPost("/api/user/edit", async (User user, UserService userService) =>
+app.MapPut("/api/user/edit", async ([FromBody] User user, UserService userService) =>
 {
 	try
 	{
@@ -171,7 +172,7 @@ app.MapPost("/api/user/edit", async (User user, UserService userService) =>
 	return Results.Ok(user);
 }).RequireAuthorization();
 
-app.MapPost("/api/user/delete", async (User user, UserService userService) =>
+app.MapDelete("/api/user/delete", async ([FromBody] User user, UserService userService) =>
 {
 	try
 	{
@@ -185,12 +186,14 @@ app.MapPost("/api/user/delete", async (User user, UserService userService) =>
 	return Results.Ok(user);
 }).RequireAuthorization();
 
+
+
 app.MapGet("/api/user/get-plans/{userId?}", async (int? userId, HttpContext http, UserService userService) =>
 {
 	if (!userId.HasValue)
 	{
 		var userIdStr = http.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-		
+
 		if (userIdStr is null) return Results.Ok();
 		userId = int.Parse(userIdStr);
 	}
@@ -199,18 +202,41 @@ app.MapGet("/api/user/get-plans/{userId?}", async (int? userId, HttpContext http
 	if (user is null) return Results.Ok();
 
 	var plans = await userService.GetUserPlansAsync(user);
+
+	Console.WriteLine("test");
+	Console.WriteLine("Plans:");
+	Console.WriteLine(plans);
 	return Results.Ok(plans);
 });
 
-app.MapPost("/api/plan/get-users", async (Plan plan, PlanService planService) =>
+
+
+app.MapPost("/api/plan/get-users", async ([FromBody] string planCode, PlanService planService) =>
 {
+	var plan = await planService.GetPlanAsync(planCode);
+	if (plan is null) return Results.NotFound();
+
 	var users = await planService.GetPlanUsersAsync(plan);
 	return Results.Ok(users);
+}).RequireAuthorization();
+
+app.MapGet("/api/plan/{planCode?}", async (string? planCode, PlanService planService) =>
+{
+	if (string.IsNullOrEmpty(planCode))
+	{
+		return Results.BadRequest();
+	}
+	var plan = await planService.GetPlanAsync(planCode);
+
+	if (plan is null)
+	{
+		return Results.NotFound();
+	}
+
+	return Results.Ok(plan);
 });
 
-
-
-app.MapPost("/api/plan/create", async (HttpContext ctx, PlanRequest planR, PlanService planService, AppDbContext db) =>
+app.MapPost("/api/plan/create", async ([FromBody] PlanRequest planR, HttpContext ctx, PlanService planService, AppDbContext db) =>
 {
 	Plan plan;
 
@@ -238,24 +264,31 @@ app.MapPost("/api/plan/create", async (HttpContext ctx, PlanRequest planR, PlanS
 
 }).RequireAuthorization();
 
-app.MapPost("/api/plan/edit", async (Plan plan, PlanService planService) =>
+app.MapPut("/api/plan/edit", async ([FromBody] Plan plan, PlanService planService) =>
 {
 	await planService.EditPlanAsync(plan);
 	return Results.Ok(plan);
 }).RequireAuthorization();
 
-app.MapPost("/api/plan/delete", async (Plan plan, PlanService planService) =>
+app.MapDelete("/api/plan/delete", async ([FromBody] Plan plan, PlanService planService) =>
 {
 	await planService.DeletePlanAsync(plan);
 	return Results.Ok();
 }).RequireAuthorization();
 
 
-app.MapFallback(async (context) =>
+// Fallback for SPA routing
+app.MapFallback(context =>
 {
-	context.Response.Redirect("/", permanent: false);
-	await Task.CompletedTask;
+	context.Response.ContentType = "text/html";
+	return context.Response.SendFileAsync(Path.Combine(frontendPath, "index.html"));
 });
+
+// app.MapFallback((context) =>
+// {
+// 	context.Response.Redirect("/", permanent: false);
+// 	return Task.CompletedTask;
+// });
 
 
 
