@@ -53,6 +53,10 @@ builder.Services.AddScoped<JwtService>();
 
 var app = builder.Build();
 
+if (app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 app.UseRouting();
 
 app.UseAuthentication();
@@ -264,9 +268,16 @@ app.MapPost("/api/plan/create", async ([FromBody] PlanRequest planR, HttpContext
 
 }).RequireAuthorization();
 
-app.MapPut("/api/plan/edit", async ([FromBody] Plan plan, PlanService planService) =>
+app.MapPut("/api/plan/{planCode}", async (string planCode, [FromBody] PlanRequest planR, PlanService planService, HttpContext ctx) =>
 {
-	await planService.EditPlanAsync(plan);
+	var userId = int.Parse(ctx.User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+ 
+	var plan = await planService.GetPlanAsync(planCode);
+	if (plan is null || !plan.Participants.Any(pu => pu.UserId == userId && (pu.Role == Role.Creator || pu.Role == Role.Admin)))
+	{
+		return Results.Forbid();
+	}
+	await planService.EditPlanAsync(plan, planR);
 	return Results.Ok(plan);
 }).RequireAuthorization();
 

@@ -67,9 +67,13 @@ namespace backend.Services
 			return plan;
 		}
 
-		public async Task<Plan> EditPlanAsync(Plan plan)
+		public async Task<Plan> EditPlanAsync(Plan plan, PlanRequest planR)
 		{
-			await _db.Plans.FindAsync(plan.Id);
+			plan.Title = planR.Title;
+			plan.Description = planR.Description;
+			plan.Location = planR.Location;
+			plan.Time = planR.Time;
+
 			await _db.SaveChangesAsync();
 			return plan;
 		}

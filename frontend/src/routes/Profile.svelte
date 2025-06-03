@@ -7,7 +7,7 @@
 <p>Profile page</p> -->
 
 <script lang="ts">
-	export let username: string;
+	let { params }: { params: { itemId: string } } = $props();
 </script>
 
-<h1>Welcome, {username}!</h1>
+<h1>Welcome, {params.itemId}!</h1>
