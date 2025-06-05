@@ -18,7 +18,7 @@
 
 </script>
 
-<div class="plan-con flex">
+<div class="plans-con flex">
 	<button
 		onclick={async () => await displayModal("create")}
 		type="button"

@@ -5,7 +5,6 @@
 	let plan: any = $state(null);
 	let users: any[] = $state([]);
 
-
 	onMount(async () => {
 		// GET PLAN
 		let response = await fetch(`/api/plan/${params.plancode}`, {
@@ -41,22 +40,69 @@
 			"Content-type": "application/json",
 		},
 		// body: JSON.stringify()
-	})
+	});
+
+	const admin = true;
+	const editing = true;
 </script>
 
 {#if plan}
 	<div class="plan-con">
-		<h1>{plan.title}</h1>
-		<strong>Time:</strong><p>{plan.time}</p>
-		<strong>Location:</strong><p>{plan.location}</p>
-		{#if plan.description}
-			<strong>Description:</strong><p>{plan.description}</p>
+		<div class="plan-header">
+			{#if admin}
+				<button>
+					<span class="material-symbols-outlined"> settings </span>
+				</button>
+			{/if}
+			<h1>{plan.title}</h1>
+		</div>
+		<div class="participants-con">
+			<strong>Participants:</strong>
+			{#each users as user, i}
+				<div class="participant">
+					<p class="participant-text">{user.name}</p>
+				</div>
+			{/each}
+		</div>
+		{#if editing}
+			<p>test</p>
+			<div class="info-con">
+				<strong>Time:</strong>
+				<p>{plan.time}</p>
+				<strong>Location:</strong>
+				<p>{plan.location}</p>
+				{#if plan.description}
+					<strong>Description:</strong>
+					<p>{plan.description}</p>
+				{/if}
+			</div>
+		{:else}
+			<div class="info-con">
+				<strong>Time:</strong>
+				<p>{plan.time}</p>
+				<strong>Location:</strong>
+				<p>{plan.location}</p>
+				{#if plan.description}
+					<strong>Description:</strong>
+					<p>{plan.description}</p>
+				{/if}
+			</div>
 		{/if}
-		{#each users as user, i}
-			<p>{user.name}</p>
-		{/each}
+		<div class="comments-con">
+			<strong>Discussion:</strong>
+			<form class="comment-form" id="comment-form">
+				<input
+					class="comment-field"
+					name="comment"
+					type="text"
+					placeholder="Add a comment"
+				/>
+			</form>
+			<ul>
+				<!-- {#each comment as comments, i}
+
+				{/each} -->
+			</ul>
+		</div>
 	</div>
-
-
-
 {/if}
