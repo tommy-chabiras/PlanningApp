@@ -28,11 +28,15 @@
 		});
 		if (response1.ok) {
 			users = await response1.json();
-			console.log(users);
+			// console.log(users);
 		}
 	});
 
 	// EDIT PLAN
+	function editPlan() {
+		
+	}
+	
 	const response = fetch(`/api/plan/${params.plancode}`, {
 		method: "PUT",
 		headers: {
@@ -42,16 +46,17 @@
 		// body: JSON.stringify()
 	});
 
+
 	const admin = true;
-	const editing = true;
+	let editing = $state(false);
 </script>
 
 {#if plan}
 	<div class="plan-con">
 		<div class="plan-header">
 			{#if admin}
-				<button>
-					<span class="material-symbols-outlined"> settings </span>
+				<button class="plan-settings" onclick="{() => editing = editing ? true : false}">
+					<span class="material-icons"> settings </span>
 				</button>
 			{/if}
 			<h1>{plan.title}</h1>
@@ -65,7 +70,7 @@
 			{/each}
 		</div>
 		{#if editing}
-			<p>test</p>
+			<!-- <p>test</p> -->
 			<div class="info-con">
 				<strong>Time:</strong>
 				<p>{plan.time}</p>
@@ -91,12 +96,12 @@
 		<div class="comments-con">
 			<strong>Discussion:</strong>
 			<form class="comment-form" id="comment-form">
-				<input
+				<textarea
 					class="comment-field"
 					name="comment"
-					type="text"
 					placeholder="Add a comment"
-				/>
+				></textarea>
+				<button class="comment-button">Add comment</button>
 			</form>
 			<ul>
 				<!-- {#each comment as comments, i}
