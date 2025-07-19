@@ -61,7 +61,7 @@ body {
 	padding: 50px;
 	border-radius: 25px;
 	box-shadow: 0 0 10px 1px rgba(0, 0, 0);
-	
+
 }
 
 .modal-input {
@@ -74,7 +74,7 @@ body {
 textarea.modal-input {
 	min-height: fit-content;
 	max-height: 200px;
-} 
+}
 
 .modal-input::placeholder {
 	color: #000000;
@@ -100,7 +100,7 @@ textarea.modal-input {
 	flex-wrap: wrap;
 }
 
-.plan-card { 
+.plan-card {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -115,51 +115,69 @@ textarea.modal-input {
 	display: grid;
 	grid-template-rows: auto;
 	grid-template-columns: 1fr 4fr 1fr;
-	grid-template-areas: 
-		"header header header"
+
+	grid-template-areas:
+		". header ."
 		"participants info ."
 		"participants info ."
 		"participants comments ."
 		"participants comments .";
 
-	align-items: center;
 	gap: 25px;
 	margin: 75px 250px;
 }
 
+
 .plan-header {
 	grid-area: header;
+}
+.info-con {
+	grid-area: info;
+
+}
+.comments-con {
+	grid-area: comments;
+}
+
+.participants-con {
+	grid-area: participants;
+	border-radius: 15px;
+	box-shadow: 0 0 2px black;
+	/* border: 1px solid black; */
+	padding: 25px;
+}
+
+
+.plan-settings {
+	display: block;
+	margin-left: auto;
+}
+
+.plan-settings span {
+	font-size: 40px;
+	font-variation-settings: 'opsz' 40;
 }
 
 .plan-con h1 {
 
 	text-align: center;
+	line-height: 5rem;
 	font-size: 5rem;
 	font-weight: 700;
 }
-.plan-con .info-con {
-	grid-area: info;
 
-}
+
 
 .plan-con strong {
 	font-size: 1.2rem;
 
 }
 
-.participants-con {
-	border-radius: 15px;
-	box-shadow: 0 0 2px black;
-	/* border: 1px solid black; */
-	padding: 25px;
-}
+
 .participants-con>strong {
 	font-size: 1.4rem;
 }
 
-.comments-con {
-	grid-area: comments;
-}
 
 .comments-con>strong {
 	margin-bottom: 100px;
@@ -170,4 +188,11 @@ textarea.modal-input {
 	padding: 10px 20px;
 	border-radius: 10px;
 	width: 100%;
+}
+
+.comment-button {
+	margin-top: 10px;
+	background-color: rgb(61, 232, 255);
+	padding: 10px 20px;
+	border-radius: 10px;
 }
